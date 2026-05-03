@@ -167,6 +167,7 @@ const closeHelpBtn = document.getElementById('closeHelpBtn');
 const progressPageInfo = document.getElementById('progressPageInfo');
 const progressZoomInfo = document.getElementById('progressZoomInfo');
 const progressImageInfo = document.getElementById('progressImageInfo');
+const progressFileInfo = document.getElementById('progressFileInfo');
 const cancelCaptureBtn = document.getElementById('cancelCaptureBtn');
 
 // Initialize popup
@@ -246,6 +247,10 @@ function detectPdfInfo(tab) {
     state.pdfUrl = pdfUrl;
     state.pdfTitle = pdfTitle || 'document';
     pdfTitleInput.value = state.pdfTitle;
+
+    if (progressFileInfo) {
+        progressFileInfo.textContent = `File: ${state.pdfTitle}`;
+    }
 }
 
 async function loadPdfInfo() {
@@ -377,6 +382,10 @@ async function handleCapture() {
 
         progressContainer.style.display = 'block';
         progressBar.style.width = '0%';
+
+        if (progressFileInfo) {
+            progressFileInfo.textContent = `File: ${state.pdfTitle || 'document'}`;
+        }
         
         // Add visual effect - initial animation
         addCaptureEffect();
@@ -489,10 +498,10 @@ async function capturePageAtZoom(page, pageNum, zoomLevel) {
 
     const images = [];
 
-    // Full page image
-    const fullImageData = canvas.toDataURL('image/png');
+    // Full page image as blob to avoid large base64 strings in memory
+    const fullImageData = await canvasToBlob(canvas);
     const fullImageName = `page_${pageNum}_full_${zoomLevel}%.png`;
-    images.push({ name: fullImageName, data: fullImageData });
+    images.push({ name: fullImageName, blob: fullImageData });
 
     // Cropped regions (top, middle, bottom)
     const regions = [
@@ -518,12 +527,24 @@ async function capturePageAtZoom(page, pageNum, zoomLevel) {
             regionCanvas.width, regionCanvas.height
         );
 
-        const regionImageData = regionCanvas.toDataURL('image/png');
+        const regionImageData = await canvasToBlob(regionCanvas);
         const regionImageName = `page_${pageNum}_${region.name}_${zoomLevel}%.png`;
-        images.push({ name: regionImageName, data: regionImageData });
+        images.push({ name: regionImageName, blob: regionImageData });
     }
 
     return images;
+}
+
+function canvasToBlob(canvas) {
+    return new Promise((resolve, reject) => {
+        canvas.toBlob((blob) => {
+            if (!blob) {
+                reject(new Error('Failed to create image blob from canvas'));
+                return;
+            }
+            resolve(blob);
+        }, 'image/png');
+    });
 }
 
 async function createAndDownloadZip(totalPages) {
@@ -532,9 +553,7 @@ async function createAndDownloadZip(totalPages) {
 
     // Add all captured images to ZIP
     for (const image of state.capturedImages) {
-        // Convert data URL to blob
-        const base64Data = image.data.split(',')[1];
-        imagesFolder.file(image.name, base64Data, { base64: true });
+        imagesFolder.file(image.name, image.blob);
     }
 
     // Add metadata file
@@ -572,7 +591,18 @@ The multiple zoom levels ensure better OCR accuracy on different content.
     zip.file('README.md', readme);
 
     // Generate and download ZIP
-    const blob = await zip.generateAsync({ type: 'blob' });
+    const blob = await zip.generateAsync(
+        {
+            type: 'blob',
+            compression: 'STORE',
+            streamFiles: true
+        },
+        (metadata) => {
+            const finalizePercent = Math.min(100, Math.max(0, metadata.percent || 0));
+            progressText.textContent = `Finalizing ZIP... ${Math.round(finalizePercent)}%`;
+            progressBar.style.width = `${95 + (finalizePercent * 0.05)}%`;
+        }
+    );
     const zipFileName = `${state.pdfTitle}.zip`;
     saveAs(blob, zipFileName);
 }
@@ -652,6 +682,7 @@ function updateZoomIndicators(activeZoom) {
 
 // Clear progress details
 function clearProgressDetails() {
+    if (progressFileInfo) progressFileInfo.textContent = `File: ${state.pdfTitle || '--'}`;
     if (progressPageInfo) progressPageInfo.textContent = 'Page: --/--';
     if (progressZoomInfo) progressZoomInfo.textContent = 'Zoom: --';
     if (progressImageInfo) progressImageInfo.textContent = 'Images: --';
