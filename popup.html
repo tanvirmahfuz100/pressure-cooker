@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pressure Cooker - PDF Capture</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header-section">
+            <div class="header-left">
+                <h1>Pressure Cooker</h1>
+                <p class="subtitle">PDF Multi-Resolution Capture</p>
+            </div>
+            <button id="helpBtn" class="help-button" title="Show help and instructions">?</button>
+        </div>
+
+        <!-- Help/Instructions Modal -->
+        <div id="helpModal" class="help-modal" style="display: none;">
+            <div class="help-content">
+                <div class="help-header">
+                    <h2>How to Use Pressure Cooker</h2>
+                    <button id="closeHelpBtn" class="close-help">×</button>
+                </div>
+                <div class="help-body">
+                    <h3>What it does</h3>
+                    <p>Captures PDF pages at multiple zoom levels and packages them as images in a ZIP file.</p>
+                    
+                    <h3>Steps</h3>
+                    <ol>
+                        <li><strong>Open a PDF</strong> - Use Ctrl+O or drag a PDF into your browser</li>
+                        <li><strong>Click the extension icon</strong> - Opens this popup with PDF info</li>
+                        <li><strong>Choose pages</strong> - Select "All Pages" or "Custom Range"</li>
+                        <li><strong>Select zoom levels</strong> - 100%, 150%, 200% (or custom)</li>
+                        <li><strong>Click "Capture PDF"</strong> - Wait for processing</li>
+                        <li><strong>Download ZIP</strong> - Contains all captured images</li>
+                    </ol>
+                    
+                    <h3>Zoom Levels Explained</h3>
+                    <ul>
+                        <li><strong>100%</strong> - Original size view</li>
+                        <li><strong>150%</strong> - 50% zoomed in</li>
+                        <li><strong>200%</strong> - 2x zoomed in (for details)</li>
+                    </ul>
+                    
+                    <h3>Region Cropping</h3>
+                    <p>Each zoom level captures 4 versions of each page:</p>
+                    <ul>
+                        <li>Full page</li>
+                        <li>Top region</li>
+                        <li>Middle region</li>
+                        <li>Bottom region</li>
+                    </ul>
+                    <p>This lets you capture detailed sections at different scales.</p>
+                    
+                    <h3>Output Format</h3>
+                    <p>ZIP file contains:</p>
+                    <ul>
+                        <li><code>page_01/</code> - Images for page 1</li>
+                        <li><code>page_02/</code> - Images for page 2, etc.</li>
+                        <li><code>metadata.json</code> - Capture details</li>
+                        <li><code>README.md</code> - Image descriptions</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div id="errorMessage" class="error-message" style="display: none;"></div>
+        <div id="successMessage" class="success-message" style="display: none;"></div>
+
+        <div class="form-group">
+            <label for="pdfTitle">PDF Name:</label>
+            <input type="text" id="pdfTitle" placeholder="Auto-detected" readonly>
+        </div>
+
+        <div class="form-group">
+            <label for="pageMode">Capture Mode:</label>
+            <select id="pageMode">
+                <option value="all">All Pages</option>
+                <option value="range">Custom Range</option>
+            </select>
+        </div>
+
+        <div id="rangeContainer" class="form-group" style="display: none;">
+            <label for="startPage">Start Page:</label>
+            <input type="number" id="startPage" min="1" placeholder="1" value="1">
+            
+            <label for="endPage">End Page:</label>
+            <input type="number" id="endPage" min="1" placeholder="Last" value="">
+        </div>
+
+        <div class="form-group">
+            <label for="zoomLevels">Zoom Levels:</label>
+            <div class="checkbox-group">
+                <label><input type="checkbox" value="100" checked> 100%</label>
+                <label><input type="checkbox" value="150" checked> 150%</label>
+                <label><input type="checkbox" value="200" checked> 200%</label>
+            </div>
+            <small>Each level captures full page + 3 regions (top, middle, bottom)</small>
+        </div>
+
+        <button id="captureBtn" class="btn btn-primary">Capture PDF</button>
+
+        <div id="progressContainer" class="progress-container" style="display: none;">
+            <p id="progressText">Preparing...</p>
+            <div id="progressFileInfo" class="progress-info progress-file">File: --</div>
+            <div class="progress-bar">
+                <div class="progress-bar-fill" id="progressBar"></div>
+            </div>
+            <div class="progress-details">
+                <div id="progressPageInfo" class="progress-info">Page: --/--</div>
+                <div id="progressZoomInfo" class="progress-info">Zoom: --</div>
+                <div id="progressImageInfo" class="progress-info">Images: --</div>
+            </div>
+            <div class="progress-actions">
+                <button id="cancelCaptureBtn" class="btn btn-secondary progress-action-btn" type="button">Cancel</button>
+            </div>
+            <div class="visual-feedback">
+                <div class="zoom-indicator" id="zoomIndicator">
+                    <div class="zoom-level zoom-100" id="zoom100">100%</div>
+                    <div class="zoom-level zoom-150" id="zoom150">150%</div>
+                    <div class="zoom-level zoom-200" id="zoom200">200%</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="statsContainer" class="stats" style="display: none;">
+            <p>Captured: <span id="capturedPages">0</span> pages</p>
+            <p>Total images: <span id="totalImages">0</span></p>
+        </div>
+        <div class="footer-actions">
+        </div>
+    </div>
+
+    <!-- Load libraries from local lib folder -->
+    <script src="lib/pdf.min.js"></script>
+    <script src="lib/jszip.min.js"></script>
+    <script src="lib/filesaver.min.js"></script>
+    <script src="popup.js"></script>
+</body>
+</html>
