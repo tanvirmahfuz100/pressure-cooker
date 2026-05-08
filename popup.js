@@ -544,3 +544,9 @@ function showSuccess(message) {
     successMessage.style.display = 'block';
     logger.log('User success message', message);
 }
+
+function ensureCaptureNotCancelled() {
+    if (state.cancelRequested) {
+        throw new Error('CAPTURE_CANCELLED');
+    }
+}
