@@ -1,0 +1,17 @@
+# OS and editor files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.vscode/
+.idea/
+
+# Build and archives
+*.zip
+*.log
+
+# Internal workflow documents (kept local)
+internal-workflow/
+
+# Git helper files
+.git-credentials

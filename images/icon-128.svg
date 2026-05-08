@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <defs>
+    <linearGradient id="grad128" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#e85450;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#8b3a3a;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <!-- Pressure cooker body -->
+  <path d="M 20 40 L 25 20 L 103 20 L 108 40 L 108 100 Q 108 112 96 112 L 32 112 Q 20 112 20 100 Z" fill="url(#grad128)" stroke="#5a2a2a" stroke-width="2"/>
+  <!-- Lid -->
+  <ellipse cx="64" cy="40" rx="38" ry="16" fill="#f27570" stroke="#5a2a2a" stroke-width="2"/>
+  <!-- Left handle -->
+  <path d="M 28 45 Q 10 45 10 64 Q 10 83 28 83" fill="none" stroke="#8b3a3a" stroke-width="6" stroke-linecap="round"/>
+  <!-- Right handle -->
+  <path d="M 100 45 Q 118 45 118 64 Q 118 83 100 83" fill="none" stroke="#8b3a3a" stroke-width="6" stroke-linecap="round"/>
+  <!-- Pressure release valve -->
+  <circle cx="64" cy="22" r="10" fill="#ffc107" stroke="#5a2a2a" stroke-width="2"/>
+  <circle cx="64" cy="22" r="6" fill="#ffed4e"/>
+  <!-- Valve detail -->
+  <line x1="64" y1="14" x2="64" y2="30" stroke="#8b3a3a" stroke-width="1.5"/>
+  <!-- Steam effect -->
+  <circle cx="45" cy="10" r="4" fill="#999" opacity="0.5"/>
+  <circle cx="64" cy="6" r="4" fill="#999" opacity="0.5"/>
+  <circle cx="83" cy="10" r="4" fill="#999" opacity="0.5"/>
+  <!-- Bottom accent -->
+  <rect x="28" y="95" width="72" height="8" rx="2" fill="#c0504d"/>
+</svg>

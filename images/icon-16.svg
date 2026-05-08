@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
+  <defs>
+    <linearGradient id="grad16" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#c0504d;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#8b3a3a;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <!-- Pressure cooker body -->
+  <path d="M 2 4 L 3 2 L 13 2 L 14 4 L 14 11 Q 14 13 12 13 L 4 13 Q 2 13 2 11 Z" fill="url(#grad16)" stroke="#5a2a2a" stroke-width="0.5"/>
+  <!-- Lid -->
+  <ellipse cx="8" cy="4" rx="5" ry="2" fill="#d9534f" stroke="#5a2a2a" stroke-width="0.5"/>
+  <!-- Handle -->
+  <path d="M 3 5 Q 1 5 1 7 Q 1 9 3 9" fill="none" stroke="#8b3a3a" stroke-width="1"/>
+  <path d="M 13 5 Q 15 5 15 7 Q 15 9 13 9" fill="none" stroke="#8b3a3a" stroke-width="1"/>
+  <!-- Pressure release valve -->
+  <circle cx="8" cy="3" r="1.5" fill="#ffc107" stroke="#5a2a2a" stroke-width="0.5"/>
+</svg>
