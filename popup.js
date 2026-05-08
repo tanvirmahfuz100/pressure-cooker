@@ -257,34 +257,13 @@ async function loadPdfInfo() {
     if (!state.pdfUrl) throw new Error('No PDF URL found');
 
     try {
-        const pdf = await getPdfDocument(state.pdfUrl);
+        const pdf = await loadPdfDocument(state.pdfUrl);
         state.totalPages = pdf.numPages;
         endPageInput.placeholder = state.totalPages.toString();
         endPageInput.value = state.totalPages.toString();
     } catch (err) {
         throw new Error(`PDF loading error: ${err.message}`);
     }
-}
-
-// Helper function to load PDF with support for file:// URLs
-async function getPdfDocument(pdfUrl) {
-    let pdfData = pdfUrl;
-    
-    // For file:// URLs, fetch as ArrayBuffer
-    if (pdfUrl.startsWith('file://')) {
-        try {
-            const response = await fetch(pdfUrl);
-            if (!response.ok) {
-                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-            }
-            pdfData = await response.arrayBuffer();
-            logger.log('Local PDF fetched for processing', { size: pdfData.byteLength });
-        } catch (fetchErr) {
-            throw new Error(`Failed to fetch local PDF: ${fetchErr.message}`);
-        }
-    }
-    
-    return pdfjsLib.getDocument(pdfData).promise;
 }
 
 // Help modal functions
@@ -391,7 +370,7 @@ async function handleCapture() {
         addCaptureEffect();
 
         // Load PDF (handles both file:// and http(s):// URLs)
-        const pdf = await getPdfDocument(state.pdfUrl);
+        const pdf = await loadPdfDocument(state.pdfUrl);
         logger.log('PDF document loaded', { totalPages: pdf.numPages });
 
         // Capture pages
@@ -410,7 +389,7 @@ async function handleCapture() {
 
             for (const zoomLevel of zoomLevels) {
                 ensureCaptureNotCancelled();
-                const images = await capturePageAtZoom(page, pageNum, zoomLevel);
+                const images = await capturePageImagesAtZoom(page, pageNum, zoomLevel);
                 state.capturedImages.push(...images);
                 state.captureStats.imagesCreated += images.length;
 
@@ -427,34 +406,23 @@ async function handleCapture() {
 
         progressText.textContent = 'Creating ZIP file...';
         progressBar.style.width = '95%';
-    ensureCaptureNotCancelled();
-        
-        // Add visual zoom effect
+        ensureCaptureNotCancelled();
+
         addZoomEffect();
 
-        // Create ZIP
-        await createAndDownloadZip(endPage - startPage + 1);
+        const blob = await buildCaptureZip({
+            title: state.pdfTitle,
+            totalPages: endPage - startPage + 1,
+            images: state.capturedImages,
+            progressCallback: (metadata) => {
+                const finalizePercent = Math.min(100, Math.max(0, metadata.percent || 0));
+                progressText.textContent = `Finalizing ZIP... ${Math.round(finalizePercent)}%`;
+                progressBar.style.width = `${95 + (finalizePercent * 0.05)}%`;
+            }
+        });
 
-        progressBar.style.width = '100%';
-        progressText.textContent = 'Complete!';
-        
-        // Add completion effect
-        addCompletionEffect();
-        
-        state.captureStats.endTime = Date.now();
-        const duration = (state.captureStats.endTime - state.captureStats.startTime) / 1000;
-        
-        capturedPagesSpan.textContent = endPage - startPage + 1;
-        totalImagesSpan.textContent = state.capturedImages.length;
-        statsContainer.style.display = 'block';
-
-        showSuccess(`Successfully captured ${state.capturedImages.length} images in ${duration.toFixed(1)}s`);
-        logger.log('Capture completed successfully', state.captureStats);
-
-        setTimeout(() => {
-            progressContainer.style.display = 'none';
-            clearProgressDetails();
-        }, 2000);
+        const zipFileName = `${state.pdfTitle}.zip`;
+        saveAs(blob, zipFileName);
     } catch (err) {
         if (err && err.message === 'CAPTURE_CANCELLED') {
             showSuccess('Capture cancelled.');
@@ -470,141 +438,6 @@ async function handleCapture() {
         state.cancelRequested = false;
         captureBtn.disabled = false;
     }
-}
-
-function ensureCaptureNotCancelled() {
-    if (state.cancelRequested) {
-        throw new Error('CAPTURE_CANCELLED');
-    }
-}
-
-async function capturePageAtZoom(page, pageNum, zoomLevel) {
-    const scale = zoomLevel / 100;
-    const baseScale = 2; // Device pixel ratio for better quality
-    const viewport = page.getViewport({ scale: scale * baseScale });
-
-    const canvas = document.createElement('canvas');
-    canvas.width = viewport.width;
-    canvas.height = viewport.height;
-
-    const context = canvas.getContext('2d', { willReadFrequently: true });
-    context.fillStyle = 'white';
-    context.fillRect(0, 0, canvas.width, canvas.height);
-
-    await page.render({
-        canvasContext: context,
-        viewport: viewport
-    }).promise;
-
-    const images = [];
-
-    // Full page image as blob to avoid large base64 strings in memory
-    const fullImageData = await canvasToBlob(canvas);
-    const fullImageName = `page_${pageNum}_full_${zoomLevel}%.png`;
-    images.push({ name: fullImageName, blob: fullImageData });
-
-    // Cropped regions (top, middle, bottom)
-    const regions = [
-        { name: 'a', y: 0 }, // Top 1/3
-        { name: 'b', y: canvas.height / 3 }, // Middle 1/3
-        { name: 'c', y: (canvas.height * 2) / 3 } // Bottom 1/3
-    ];
-
-    for (const region of regions) {
-        const regionCanvas = document.createElement('canvas');
-        regionCanvas.width = canvas.width;
-        regionCanvas.height = Math.min(canvas.height / 3, canvas.height - region.y);
-
-        const regionContext = regionCanvas.getContext('2d', { willReadFrequently: true });
-        regionContext.fillStyle = 'white';
-        regionContext.fillRect(0, 0, regionCanvas.width, regionCanvas.height);
-
-        regionContext.drawImage(
-            canvas,
-            0, region.y,
-            canvas.width, regionCanvas.height,
-            0, 0,
-            regionCanvas.width, regionCanvas.height
-        );
-
-        const regionImageData = await canvasToBlob(regionCanvas);
-        const regionImageName = `page_${pageNum}_${region.name}_${zoomLevel}%.png`;
-        images.push({ name: regionImageName, blob: regionImageData });
-    }
-
-    return images;
-}
-
-function canvasToBlob(canvas) {
-    return new Promise((resolve, reject) => {
-        canvas.toBlob((blob) => {
-            if (!blob) {
-                reject(new Error('Failed to create image blob from canvas'));
-                return;
-            }
-            resolve(blob);
-        }, 'image/png');
-    });
-}
-
-async function createAndDownloadZip(totalPages) {
-    const zip = new JSZip();
-    const imagesFolder = zip.folder('images');
-
-    // Add all captured images to ZIP
-    for (const image of state.capturedImages) {
-        imagesFolder.file(image.name, image.blob);
-    }
-
-    // Add metadata file
-    const metadata = {
-        title: state.pdfTitle,
-        totalPages: totalPages,
-        totalImages: state.capturedImages.length,
-        captureDate: new Date().toISOString(),
-        structure: {
-            perPage: state.capturedImages.length / totalPages,
-            fullPageImages: state.capturedImages.filter(img => img.name.includes('_full_')).length,
-            croppedImages: state.capturedImages.filter(img => !img.name.includes('_full_')).length
-        }
-    };
-    zip.file('metadata.json', JSON.stringify(metadata, null, 2));
-
-    // Add README
-    const readme = `# ${state.pdfTitle} - Captured Images
-
-This ZIP contains multi-resolution captures of the PDF for OCR processing.
-
-## Structure
-- **Full page images**: page_X_full_Y%.png (Y = zoom percentage)
-- **Cropped regions**: page_X_a_Y%.png (top), page_X_b_Y%.png (middle), page_X_c_Y%.png (bottom)
-
-## Metadata
-- Total Pages: ${totalPages}
-- Total Images: ${state.capturedImages.length}
-- Capture Date: ${new Date().toLocaleString()}
-
-## Usage
-Use these images with an OCR tool like DeepSeek or Tesseract for text extraction.
-The multiple zoom levels ensure better OCR accuracy on different content.
-`;
-    zip.file('README.md', readme);
-
-    // Generate and download ZIP
-    const blob = await zip.generateAsync(
-        {
-            type: 'blob',
-            compression: 'STORE',
-            streamFiles: true
-        },
-        (metadata) => {
-            const finalizePercent = Math.min(100, Math.max(0, metadata.percent || 0));
-            progressText.textContent = `Finalizing ZIP... ${Math.round(finalizePercent)}%`;
-            progressBar.style.width = `${95 + (finalizePercent * 0.05)}%`;
-        }
-    );
-    const zipFileName = `${state.pdfTitle}.zip`;
-    saveAs(blob, zipFileName);
 }
 
 // Visual Effects

@@ -45,114 +45,10 @@ function configurePdfWorker() {
     pdfjsLib.GlobalWorkerOptions.workerSrc = chrome.runtime.getURL('lib/pdf.worker.min.js');
 }
 
-async function loadPdf(pdfUrl) {
-    let pdfData = pdfUrl;
-    if (pdfUrl.startsWith('file://')) {
-        const response = await fetch(pdfUrl);
-        if (!response.ok) {
-            throw new Error(`Failed to fetch local PDF: ${response.status} ${response.statusText}`);
-        }
-        pdfData = await response.arrayBuffer();
-    }
-    return pdfjsLib.getDocument(pdfData).promise;
-}
-
 function ensureNotCancelled() {
     if (cancelRequested) {
         throw new Error('CAPTURE_CANCELLED');
     }
-}
-
-function canvasToBlob(canvas) {
-    return new Promise((resolve, reject) => {
-        canvas.toBlob((blob) => {
-            if (!blob) {
-                reject(new Error('Failed to render image'));
-                return;
-            }
-            resolve(blob);
-        }, 'image/png');
-    });
-}
-
-async function capturePageAtZoom(page, pageNum, zoomLevel) {
-    ensureNotCancelled();
-
-    const scale = zoomLevel / 100;
-    const baseScale = 2;
-    const viewport = page.getViewport({ scale: scale * baseScale });
-
-    const canvas = document.createElement('canvas');
-    canvas.width = viewport.width;
-    canvas.height = viewport.height;
-
-    const context = canvas.getContext('2d', { willReadFrequently: true });
-    context.fillStyle = 'white';
-    context.fillRect(0, 0, canvas.width, canvas.height);
-
-    await page.render({ canvasContext: context, viewport }).promise;
-
-    const images = [];
-    images.push({
-        name: `page_${pageNum}_full_${zoomLevel}%.png`,
-        blob: await canvasToBlob(canvas)
-    });
-
-    const regionHeight = canvas.height / 3;
-    const regions = [
-        { name: 'a', y: 0 },
-        { name: 'b', y: regionHeight },
-        { name: 'c', y: regionHeight * 2 }
-    ];
-
-    for (const region of regions) {
-        ensureNotCancelled();
-
-        const regionCanvas = document.createElement('canvas');
-        regionCanvas.width = canvas.width;
-        regionCanvas.height = Math.min(regionHeight, canvas.height - region.y);
-
-        const regionContext = regionCanvas.getContext('2d', { willReadFrequently: true });
-        regionContext.fillStyle = 'white';
-        regionContext.fillRect(0, 0, regionCanvas.width, regionCanvas.height);
-        regionContext.drawImage(
-            canvas,
-            0,
-            region.y,
-            canvas.width,
-            regionCanvas.height,
-            0,
-            0,
-            regionCanvas.width,
-            regionCanvas.height
-        );
-
-        images.push({
-            name: `page_${pageNum}_${region.name}_${zoomLevel}%.png`,
-            blob: await canvasToBlob(regionCanvas)
-        });
-    }
-
-    return images;
-}
-
-async function buildZip(fileName, totalPages, images) {
-    const zip = new JSZip();
-    const imagesFolder = zip.folder('images');
-
-    for (const image of images) {
-        imagesFolder.file(image.name, image.blob);
-    }
-
-    const metadata = {
-        title: fileName,
-        totalPages,
-        totalImages: images.length,
-        captureDate: new Date().toISOString()
-    };
-    zip.file('metadata.json', JSON.stringify(metadata, null, 2));
-
-    return zip.generateAsync({ type: 'blob', compression: 'STORE', streamFiles: true });
 }
 
 async function runCapture(request) {
@@ -173,7 +69,7 @@ async function runCapture(request) {
     }
 
     configurePdfWorker();
-    const pdf = await loadPdf(pdfUrl);
+    const pdf = await loadPdfDocument(pdfUrl);
 
     const safeStart = Math.max(1, Number(startPage) || 1);
     const safeEnd = Math.min(pdf.numPages, Number(endPage) || pdf.numPages);
@@ -205,7 +101,7 @@ async function runCapture(request) {
 
         for (const zoomLevel of zoomLevels) {
             ensureNotCancelled();
-            const created = await capturePageAtZoom(page, pageNum, zoomLevel);
+            const created = await capturePageImagesAtZoom(page, pageNum, zoomLevel);
             images.push(...created);
 
             updateStatus({
@@ -219,7 +115,12 @@ async function runCapture(request) {
         }
     }
 
-    const blob = await buildZip(pdfTitle, totalPages, images);
+    const blob = await buildCaptureZip({
+        title: pdfTitle,
+        totalPages,
+        images,
+        includeReadme: false
+    });
     const fileName = `${pdfTitle}.zip`;
     const url = URL.createObjectURL(blob);
 
