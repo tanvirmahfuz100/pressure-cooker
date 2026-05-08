@@ -134,7 +134,7 @@ Usually a browser setting or permission issue.
    - Search for `.zip` files
 
 3. **Try a test**:
-   - Click extension → Capture with just page 1
+   - Click extension  Capture with just page 1
    - This will create a smaller ZIP
    - If that works, the issue is likely file size
 
@@ -158,7 +158,7 @@ Capture did not finish, or ZIP creation failed.
    - Do not close the popup during capture
 
 2. **Check the console**:
-   - Right-click extension → "Inspect popup"
+   - Right-click extension  "Inspect popup"
    - Open Console tab
    - Look for red error messages
    - Save a screenshot of the error
@@ -263,8 +263,8 @@ PDF rendering issue or memory problem.
 
 **When nothing else works:**
 
-1. Open Developer Console: F12 → Console tab
-2. Reload the extension: `chrome://extensions/` → Click refresh
+1. Open Developer Console: F12  Console tab
+2. Reload the extension: `chrome://extensions/`  Click refresh
 3. Open the PDF again
 4. Click extension and try again
 5. Check console for any error messages (red text)

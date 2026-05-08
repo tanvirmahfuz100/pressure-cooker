@@ -1,32 +1,32 @@
 # Pressure Cooker - Project Overview & File Guide
 
-## 📦 Complete Project Structure
+##  Complete Project Structure
 
 ```
 Pressure Cooker/
-│
-├── 📄 CORE EXTENSION FILES
-│   ├── manifest.json              [Extension configuration]
-│   ├── popup.html                 [User interface]
-│   ├── popup.js                   [Main logic & capture engine]
-│   ├── styles.css                 [Popup styling]
-│   ├── background.js              [Service worker]
-│   └── images/                    [Extension icons]
-│       ├── icon-16.svg
-│       ├── icon-48.svg
-│       └── icon-128.svg
-│
-├── 📚 DOCUMENTATION
-│   ├── README.md                  [Complete user documentation]
-│   ├── QUICK_START.md             [3-minute setup guide]
-│   ├── GETTING_STARTED.md         [Testing & verification]
-│   ├── TROUBLESHOOTING.md         [Error diagnosis & fixes]
-│   ├── ADVANCED_CONFIG.md         [Customization guide]
-│   ├── DEVELOPER.md               [Technical architecture]
-│   └── PROJECT_OVERVIEW.md        [This file]
+
+  CORE EXTENSION FILES
+    manifest.json              [Extension configuration]
+    popup.html                 [User interface]
+    popup.js                   [Main logic & capture engine]
+    styles.css                 [Popup styling]
+    background.js              [Service worker]
+    images/                    [Extension icons]
+        icon-16.svg
+        icon-48.svg
+        icon-128.svg
+
+  DOCUMENTATION
+    README.md                  [Complete user documentation]
+    QUICK_START.md             [3-minute setup guide]
+    GETTING_STARTED.md         [Testing & verification]
+    TROUBLESHOOTING.md         [Error diagnosis & fixes]
+    ADVANCED_CONFIG.md         [Customization guide]
+    DEVELOPER.md               [Technical architecture]
+    PROJECT_OVERVIEW.md        [This file]
 ```
 
-## 📝 File Descriptions
+##  File Descriptions
 
 ### Core Extension Files
 
@@ -237,29 +237,29 @@ Pressure Cooker/
 
 ---
 
-## 🗺️ Documentation Roadmap
+##  Documentation Roadmap
 
 ### For Different Users
 
-**👤 First-time user?**
+** First-time user?**
 1. Read: QUICK_START.md
 2. Follow: Installation steps
 3. Try: Test scenario A
 4. Reference: README.md for details
 
-**⚙️ Want to customize?**
+** Want to customize?**
 1. Read: ADVANCED_CONFIG.md
 2. Make changes to popup.html, styles.css, or popup.js
 3. Reload: chrome://extensions/ (click refresh)
 4. Test: Verify changes work
 
-**🐛 Something broken?**
+** Something broken?**
 1. Read: TROUBLESHOOTING.md
 2. Find: Your specific error
 3. Follow: Suggested solutions
 4. Check: Browser console (F12)
 
-**👨‍💻 Want to extend it?**
+** Want to extend it?**
 1. Read: DEVELOPER.md
 2. Study: Architecture section
 3. Review: Enhancement ideas
@@ -268,7 +268,7 @@ Pressure Cooker/
 
 ---
 
-## 🚀 Quick Reference
+##  Quick Reference
 
 ### Installation
 ```
@@ -297,34 +297,34 @@ Pressure Cooker/
 
 ### Customization
 ```
-Edit files → Reload extension → Test
+Edit files  Reload extension  Test
 ```
 
 ### Troubleshooting
 ```
-Check console (F12) → Read TROUBLESHOOTING.md → Try solution
+Check console (F12)  Read TROUBLESHOOTING.md  Try solution
 ```
 
 ---
 
-## 📊 Feature Matrix
+##  Feature Matrix
 
 | Feature | Implemented | Documented | Tested |
 |---------|-------------|-----------|--------|
-| Multi-zoom capture | ✅ | ✅ | ✅ |
-| Crop regions | ✅ | ✅ | ✅ |
-| Page range selection | ✅ | ✅ | ✅ |
-| ZIP packaging | ✅ | ✅ | ✅ |
-| Metadata included | ✅ | ✅ | ✅ |
-| Progress indication | ✅ | ✅ | ✅ |
-| Error handling | ✅ | ✅ | ✅ |
-| PDF detection | ✅ | ✅ | ✅ |
-| Customization | ✅ | ✅ | ✅ |
-| Performance optimization | ✅ | ✅ | ⚠️ |
+| Multi-zoom capture |  |  |  |
+| Crop regions |  |  |  |
+| Page range selection |  |  |  |
+| ZIP packaging |  |  |  |
+| Metadata included |  |  |  |
+| Progress indication |  |  |  |
+| Error handling |  |  |  |
+| PDF detection |  |  |  |
+| Customization |  |  |  |
+| Performance optimization |  |  |  |
 
 ---
 
-## 🔄 Typical Workflows
+##  Typical Workflows
 
 ### Workflow 1: Basic OCR Processing
 ```
@@ -378,20 +378,20 @@ Check console (F12) → Read TROUBLESHOOTING.md → Try solution
 
 ---
 
-## 📈 Version History
+##  Version History
 
 ### v1.0.0 (Current)
-- ✅ Multi-zoom PDF capture
-- ✅ Regional cropping (3 regions per zoom)
-- ✅ ZIP bundling with JSZip
-- ✅ Page range selection
-- ✅ Progress indication
-- ✅ Metadata generation
-- ✅ Full documentation
+-  Multi-zoom PDF capture
+-  Regional cropping (3 regions per zoom)
+-  ZIP bundling with JSZip
+-  Page range selection
+-  Progress indication
+-  Metadata generation
+-  Full documentation
 
 ---
 
-## 🎓 Learning Paths
+##  Learning Paths
 
 ### Path 1: User (No coding)
 1. QUICK_START.md
@@ -423,7 +423,7 @@ Check console (F12) → Read TROUBLESHOOTING.md → Try solution
 
 ---
 
-## 🎯 Common Entry Points by Task
+##  Common Entry Points by Task
 
 | Task | Start Here | Time | Difficulty |
 |------|-----------|------|-----------|
@@ -438,50 +438,50 @@ Check console (F12) → Read TROUBLESHOOTING.md → Try solution
 
 ---
 
-## 💡 Pro Tips
+##  Pro Tips
 
 1. **Keep backups**: Before modifying, copy the folder
 2. **Test incrementally**: Test after each small change
 3. **Use test PDFs**: Create known test cases
-4. **Check console first**: F12 → Console always shows issues
+4. **Check console first**: F12  Console always shows issues
 5. **Read docs completely**: Most answers are in the docs
 6. **Join communities**: Chrome extension forums for help
 
 ---
 
-## 📞 Getting Help
+##  Getting Help
 
-### Problem Type → Where to Look
-- "How do I install?" → QUICK_START.md
-- "It doesn't work" → TROUBLESHOOTING.md
-- "How do I customize?" → ADVANCED_CONFIG.md
-- "How does it work?" → DEVELOPER.md
-- "Test didn't pass" → GETTING_STARTED.md
-- "I want a new feature" → DEVELOPER.md (Enhancement Ideas)
+### Problem Type  Where to Look
+- "How do I install?"  QUICK_START.md
+- "It doesn't work"  TROUBLESHOOTING.md
+- "How do I customize?"  ADVANCED_CONFIG.md
+- "How does it work?"  DEVELOPER.md
+- "Test didn't pass"  GETTING_STARTED.md
+- "I want a new feature"  DEVELOPER.md (Enhancement Ideas)
 
 ---
 
-## ✅ Quality Checklist
+##  Quality Checklist
 
 This project includes:
-- ✅ Fully functional extension
-- ✅ Clean, documented code
-- ✅ Comprehensive user guide
-- ✅ Troubleshooting guide
-- ✅ Advanced configuration guide
-- ✅ Developer documentation
-- ✅ Getting started guide
-- ✅ Technical deep-dives
-- ✅ Customization options
-- ✅ Multiple test scenarios
+-  Fully functional extension
+-  Clean, documented code
+-  Comprehensive user guide
+-  Troubleshooting guide
+-  Advanced configuration guide
+-  Developer documentation
+-  Getting started guide
+-  Technical deep-dives
+-  Customization options
+-  Multiple test scenarios
 
 ---
 
-## 🎉 You're All Set!
+##  You're All Set!
 
 Pick a documentation file based on your needs and dive in. Everything you need is documented.
 
-**Enjoy capturing PDFs with Pressure Cooker!** 🚀
+**Enjoy capturing PDFs with Pressure Cooker!** 
 
 ---
 

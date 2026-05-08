@@ -1,17 +1,17 @@
 # Pressure Cooker - Getting Started & Testing
 
-## ✅ Pre-Installation Checklist
+##  Pre-Installation Checklist
 
 - [ ] Chrome 91 or newer installed
 - [ ] All extension files downloaded
 - [ ] Developer mode available on your system
 - [ ] About 500MB free disk space
 
-## 🎯 Quick Installation (3 Steps)
+##  Quick Installation (3 Steps)
 
 ### Step 1: Open Extensions Page
 ```
-Chrome Menu → More Tools → Extensions
+Chrome Menu  More Tools  Extensions
 OR
 Type in address bar: chrome://extensions/
 ```
@@ -26,7 +26,7 @@ Type in address bar: chrome://extensions/
 3. Select it and click "Open"
 4. Done! You should see the extension in the list
 
-## 🧪 First Test
+##  First Test
 
 ### Test 1: Basic Detection
 
@@ -58,7 +58,7 @@ Type in address bar: chrome://extensions/
 3. **Wait for completion**: Should reach 100%
 4. **Check the ZIP**: Unzip and verify structure
 
-## 📋 Test Scenarios
+##  Test Scenarios
 
 ### Scenario A: Small PDF (10 pages)
 
@@ -70,10 +70,10 @@ Type in address bar: chrome://extensions/
 | Expected ZIP size | 50-100 MB |
 
 **Success criteria**:
-- ✓ ZIP contains 120 images (10 × 3 × 4)
-- ✓ All images are PNG files
-- ✓ metadata.json exists
-- ✓ README.md exists
+-  ZIP contains 120 images (10  3  4)
+-  All images are PNG files
+-  metadata.json exists
+-  README.md exists
 
 ### Scenario B: Medium PDF (50 pages)
 
@@ -85,9 +85,9 @@ Type in address bar: chrome://extensions/
 | Expected ZIP size | 20-40 MB |
 
 **Success criteria**:
-- ✓ ZIP contains 80 images (10 × 2 × 4)
-- ✓ File naming is consistent
-- ✓ No errors in console
+-  ZIP contains 80 images (10  2  4)
+-  File naming is consistent
+-  No errors in console
 
 ### Scenario C: Performance Test
 
@@ -99,26 +99,26 @@ Type in address bar: chrome://extensions/
 | Expected ZIP size | 200+ MB |
 
 **Success criteria**:
-- ✓ Browser doesn't freeze
-- ✓ Progress bar updates smoothly
-- ✓ ZIP completes successfully
+-  Browser doesn't freeze
+-  Progress bar updates smoothly
+-  ZIP completes successfully
 
-## 🔍 Verification Checklist
+##  Verification Checklist
 
 After each capture, verify:
 
 ### ZIP Structure
 ```
 your_pdf.zip
-├── images/
-│   ├── page_1_full_100%.png ✓
-│   ├── page_1_a_100%.png ✓
-│   ├── page_1_b_100%.png ✓
-│   ├── page_1_c_100%.png ✓
-│   ├── page_2_full_100%.png ✓
-│   ...
-├── metadata.json ✓
-└── README.md ✓
+ images/
+    page_1_full_100%.png 
+    page_1_a_100%.png 
+    page_1_b_100%.png 
+    page_1_c_100%.png 
+    page_2_full_100%.png 
+   ...
+ metadata.json 
+ README.md 
 ```
 
 ### Image Quality
@@ -144,7 +144,7 @@ Open `metadata.json` and verify:
 }
 ```
 
-## 🐛 Common Test Failures & Fixes
+##  Common Test Failures & Fixes
 
 ### Test Failure: Icon Stays Greyed Out
 
@@ -181,7 +181,7 @@ Open `metadata.json` and verify:
 3. Wait longer before checking
 4. Restart the extension
 
-## 📊 Test Report Template
+##  Test Report Template
 
 Save this as a reference for tracking tests:
 
@@ -199,7 +199,7 @@ Save this as a reference for tracking tests:
 - Pages tested: [range]
 - Zoom levels: [selected]
 - Duration: [seconds]
-- Result: ✓ PASS / ✗ FAIL
+- Result:  PASS /  FAIL
 
 ### Issues encountered
 - [Issue 1]
@@ -209,7 +209,7 @@ Save this as a reference for tracking tests:
 [Any observations]
 ```
 
-## 🎓 Test PDFs to Use
+##  Test PDFs to Use
 
 ### Public PDFs for Testing
 
@@ -244,7 +244,7 @@ If you need specific test cases:
 - [ ] PDF with tables
 - [ ] PDF with complex fonts
 
-## 💾 Backup & Restore
+##  Backup & Restore
 
 ### Backing Up Your Setup
 
@@ -262,7 +262,7 @@ cp -r "/path/to/Backup"/* "/path/to/Pressure Cooker"
 
 Then reload the extension.
 
-## 📈 Expected Results by PDF Size
+##  Expected Results by PDF Size
 
 | PDF Size | Pages | All 3 Zoom | Est. Time | ZIP Size |
 |----------|-------|-----------|-----------|----------|
@@ -274,7 +274,7 @@ Then reload the extension.
 
 *Times are estimates on mid-range hardware (quad-core CPU, 8GB RAM)*
 
-## ✨ Success Indicators
+##  Success Indicators
 
 You've successfully installed and tested when:
 
@@ -290,7 +290,7 @@ You've successfully installed and tested when:
 - [x] README.md is readable
 - [x] No browser crashes or freezes
 
-## 🎯 Next Steps
+##  Next Steps
 
 Once testing is complete:
 
@@ -300,12 +300,12 @@ Once testing is complete:
 4. **Share feedback**: Note what works well, what could improve
 5. **Integrate with workflow**: Add to your document processing pipeline
 
-## 📞 Test Support
+##  Test Support
 
 If tests fail:
 
-1. **Check the console**: F12 → Console tab → Look for errors
-2. **Clear cache**: Ctrl+Shift+Del → Clear browsing data
+1. **Check the console**: F12  Console tab  Look for errors
+2. **Clear cache**: Ctrl+Shift+Del  Clear browsing data
 3. **Reload extension**: Go to extensions page, click refresh
 4. **Restart browser**: Close and reopen Chrome completely
 5. **Read TROUBLESHOOTING.md**: Comprehensive error solutions
